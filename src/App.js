@@ -1,26 +1,99 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+} from 'react-router-dom';
+import axios from 'axios';
+import cookie from 'react-cookies';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import ClippedDrawer from './pages/ClippedDrawer';
+import SignIn from './pages/SignIn';
+
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+  },
+});
+
+
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = { signedin: false, loaded: false };
+  }
+
+  async componentDidMount() {
+    const apitoken = cookie.load('breadboardapitoken');
+    try {
+      const res = await axios.get('https://fermi3.com', {
+        headers: { Authorization: `Token ${apitoken}` },
+      });
+      if (res.status === 200) {
+        this.setState({ signedIn: true, loaded: true });
+        if (window.location.href !== `${window.location.origin}/dashboard`) { window.location.href = `${window.location.origin}/dashboard`; }
+      } else {
+        this.reSignIn();
+      }
+    } catch (error) {
+      console.log(error);
+      this.reSignIn();
+    }
+    console.log(this.state);
+  }
+
+  reSignIn() {
+    this.setState({ signedIn: false, loaded: true });
+    cookie.remove('breadboardapitoken', { path: '/' });
+    if (window.location.href !== `${window.location.origin}/`) { window.location.href = `${window.location.origin}/`; }
+  }
+
+  loading() {
+    return (
+      <div className="App">
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          Loading
+        </ThemeProvider>
+      </div>
+    );
+  }
+
+
+  renderLoaded() {
+    return (
+      <div className="App">
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+
+          <Router>
+            <Switch>
+              <Route exact path="/">
+                <SignIn />
+              </Route>
+              <Route exact path="/dashboard">
+                <ClippedDrawer />
+              </Route>
+            </Switch>
+
+          </Router>
+
+        </ThemeProvider>
+      </div>
+    );
+  }
+
+  render() {
+    if (this.state.loaded) {
+      return this.renderLoaded();
+    }
+    return this.loading();
+  }
 }
 
 export default App;
