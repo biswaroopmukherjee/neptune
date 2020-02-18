@@ -1,11 +1,16 @@
 import React from 'react';
-import { withStyles } from '@material-ui/styles';
+import axios from 'axios';
+import cookie from 'react-cookies';
 import PropTypes from 'prop-types';
+
+import { withStyles } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import axios from 'axios';
-import cookie from 'react-cookies';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { Container } from '@material-ui/core';
+
 import SideBar from '../components/SideBar';
 import DataGrid from '../components/DataGrid';
 
@@ -32,30 +37,29 @@ const styles = (theme) => ({
     padding: theme.spacing(3),
   },
   toolbar: theme.mixins.toolbar,
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
 });
 
 
-// const rows = [
-//   { id: 0, product: 'DevExtreme', owner: 'DevExpress' },
-//   { id: 1, product: 'DevExtreme Reactive', owner: 'DevExpress' },
-// ];
-
-// const columns = [
-//   { name: 'id', title: 'ID' },
-//   { name: 'product', title: 'Product' },
-//   { name: 'owner', title: 'Owner' },
-// ];
-
 const columns = [
-  { name: 'id', title: 'ID' },
   { name: 'name', title: 'Name' },
-  { name: 'odpath', title: 'odpath' },
+  { name: 'saddleSqueezeTime', title: 'saddleSqueezeTime' },
   { name: 'vortexCoolMHz', title: 'vortexCoolMHz' }];
+
+const defaultColumnWidths = [
+  { columnName: 'name', width: 280 },
+  { columnName: 'saddleSqueezeTime', width: 180 },
+  { columnName: 'vortexCoolMHz', width: 180 }];
 
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
     this.state = {
       images: [],
       current_image: [],
@@ -117,6 +121,12 @@ class Dashboard extends React.Component {
     }
   }
 
+  handleClick(e) {
+    console.log(e);
+    this.setState({ current_image: e });
+  }
+
+
   render() {
     const { classes } = this.props;
     return (
@@ -125,30 +135,32 @@ class Dashboard extends React.Component {
         <SideBar />
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <DataGrid dataRows={this.state.images} dataColumns={columns} />
-          <Typography paragraph>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-            ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-            facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-            gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-            donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-            adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-            Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-            imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-            arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-            donec massa sapien faucibus et molestie ac.
-          </Typography>
-          <Typography paragraph>
-            Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-            facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-            tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-            consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-            vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-            hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-            tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
-            nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
-            accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-          </Typography>
+          {/* <Container> */}
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <DataGrid
+                dataRows={this.state.images}
+                dataColumns={columns}
+                defaultColumnWidths={defaultColumnWidths}
+                setCurrentImage={this.handleClick}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Paper className={classes.paper}>
+                <img
+                  src={this.state.current_image.odpath}
+                  alt="odimage"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+          {/* </Container> */}
+
         </main>
       </div>
     );
