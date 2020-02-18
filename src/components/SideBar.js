@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function DataGrid() {
+export default function SideBar(props) {
   const classes = useStyles();
   return (
     <>
@@ -58,7 +58,7 @@ export default function DataGrid() {
 
         <div className={classes.toolbar} />
         {/* <ListRouter /> */}
-        <StaticDatePicker />
+        <StaticDatePicker dashboardDateChange={props.dashboardDateChange} />
 
       </Drawer>
 

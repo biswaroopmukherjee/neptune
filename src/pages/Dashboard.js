@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
@@ -13,6 +14,7 @@ import { Container } from '@material-ui/core';
 
 import SideBar from '../components/SideBar';
 import DataGrid from '../components/DataGrid';
+import logo from '../logo.svg';
 
 
 const drawerWidth = 240;
@@ -59,10 +61,10 @@ const defaultColumnWidths = [
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleRowClick = this.handleRowClick.bind(this);
     this.state = {
       images: [],
-      current_image: [],
+      currentImage: [],
     };
   }
 
@@ -71,11 +73,11 @@ class Dashboard extends React.Component {
       const startDate = new Date('January 13 2020');
       const images = await this.loadImages(startDate);
       console.log(images);
-      const current_image = await images[0];
+      const currentImage = await images[0];
 
       this.setState({
         images,
-        current_image,
+        currentImage,
         startDate,
       });
     } catch (e) {
@@ -111,28 +113,52 @@ class Dashboard extends React.Component {
       console.log(res.data);
       const images = await res.data.results.filter((image) => image.odpath && image.run);
       images.forEach((image) => {
-        for (const key in image.run.parameters) {
+        const keys = Object.keys(image.run.parameters);
+        for (const key of keys) {
           image[key] = image.run.parameters[key];
         }
       });
       return images;
     } catch (e) {
       console.log(e);
+      return null;
     }
   }
 
-  handleClick(e) {
-    console.log(e);
-    this.setState({ current_image: e });
+  handleRowClick(image) {
+    this.setState({ currentImage: image });
   }
 
+  async dashboardDateChange(date) {
+    try {
+      const images = await this.loadImages(date);
+      const currentImage = await images ? images[0] : { odpath: null };
+      console.log(currentImage);
+
+      this.setState({
+        images,
+        currentImage,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  setCurrentImageSrc() {
+    if (this.state.currentImage) {
+      return this.state.currentImage.odpath;
+      console.log(logo);
+    }
+    return logo;
+  }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <SideBar />
+        <SideBar dashboardDateChange={(d) => { this.dashboardDateChange(d); }} />
+
         <main className={classes.content}>
           <div className={classes.toolbar} />
           {/* <Container> */}
@@ -142,13 +168,13 @@ class Dashboard extends React.Component {
                 dataRows={this.state.images}
                 dataColumns={columns}
                 defaultColumnWidths={defaultColumnWidths}
-                setCurrentImage={this.handleClick}
+                setCurrentImage={this.handleRowClick}
               />
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.paper}>
                 <img
-                  src={this.state.current_image.odpath}
+                  src={this.setCurrentImageSrc()}
                   alt="odimage"
                   style={{
                     width: '100%',

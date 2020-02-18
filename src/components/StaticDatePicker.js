@@ -28,8 +28,13 @@ const materialTheme = createMuiTheme({
 });
 
 
-const StaticDatePicker = () => {
-  const [date, changeDate] = useState(new Date());
+const StaticDatePicker = (props) => {
+  const [date, setStateDate] = useState(new Date());
+
+  const handleDateChange = (date) => {
+    setStateDate(date);
+    props.dashboardDateChange(date);
+  };
 
   return (
 
@@ -42,7 +47,7 @@ const StaticDatePicker = () => {
           variant="static"
           openTo="date"
           value={date}
-          onChange={changeDate}
+          onChange={(d) => handleDateChange(d)}
         />
 
       </ThemeProvider>
