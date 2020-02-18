@@ -1,23 +1,20 @@
 import React from 'react';
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
 
+import TableContainer from '@material-ui/core/TableContainer';
+import Paper from '@material-ui/core/Paper';
 
 
-export default function DataGrid() {
-    return (
-        <Grid
-            rows={[
-                { id: 0, product: 'DevExtreme', owner: 'DevExpress' },
-                { id: 1, product: 'DevExtreme Reactive', owner: 'DevExpress' },
-            ]}
-            columns={[
-                { name: 'id', title: 'ID' },
-                { name: 'product', title: 'Product' },
-                { name: 'owner', title: 'Owner' },
-            ]}>
-            <Table
-            />
-            <TableHeaderRow />
-            </Grid>
-    )
-  }
+export default function DataGrid(props) {
+  return (
+    <TableContainer component={Paper}>
+      <Grid
+        rows={props.dataRows}
+        columns={props.dataColumns}
+      >
+        <Table />
+        <TableHeaderRow />
+      </Grid>
+    </TableContainer>
+  );
+}

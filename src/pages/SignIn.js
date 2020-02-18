@@ -71,10 +71,6 @@ export default function SignIn() {
 
 
   async function login() {
-    console.log(state.email);
-    console.log(state.password);
-
-
     try {
       const response = await axios.post('https://fermi3.com/api-token-auth/', {
         username: state.email,
@@ -83,11 +79,8 @@ export default function SignIn() {
       console.log(response);
       cookie.save('username', 'bec1', { path: '/' });
       cookie.save('breadboardapitoken', response.data.token, { path: '/' });
-      console.log(document.cookie);
       window.location.href = `${window.location.origin}/dashboard`;
-      // cookie.remove('userId', { path: '/' })
     } catch (error) {
-      console.error(error);
       alert('error logging in');
     }
   }
