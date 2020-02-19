@@ -20,7 +20,7 @@ import logo from '../logo.svg';
 
 const drawerWidth = 240;
 
-const API = 'https://fermi3.com/images';
+const API = 'https://fermi3.com/images/';
 const apitoken = cookie.load('breadboardapitoken');
 
 const styles = (theme) => ({
