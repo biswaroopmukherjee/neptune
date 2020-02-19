@@ -20,6 +20,8 @@ import logo from '../logo.svg';
 const drawerWidth = 240;
 
 const API = 'https://fermi3.com/images';
+const apitoken = cookie.load('breadboardapitoken');
+
 const styles = (theme) => ({
   root: {
     display: 'flex',
@@ -48,14 +50,18 @@ const styles = (theme) => ({
 
 
 const columns = [
+  { name: 'id', title: '#' },
   { name: 'name', title: 'Name' },
+  { name: 'notes', title: 'Notes' },
   { name: 'saddleSqueezeTime', title: 'saddleSqueezeTime' },
   { name: 'vortexCoolMHz', title: 'vortexCoolMHz' }];
 
 const defaultColumnWidths = [
-  { columnName: 'name', width: 280 },
-  { columnName: 'saddleSqueezeTime', width: 180 },
-  { columnName: 'vortexCoolMHz', width: 180 }];
+  { columnName: 'id', width: 110, editingEnabled: false },
+  { columnName: 'name', width: 280, editingEnabled: false },
+  { columnName: 'notes', width: 180, editingEnabled: true },
+  { columnName: 'saddleSqueezeTime', width: 150, editingEnabled: false },
+  { columnName: 'vortexCoolMHz', width: 150, editingEnabled: false }];
 
 
 class Dashboard extends React.Component {
@@ -85,48 +91,11 @@ class Dashboard extends React.Component {
     }
   }
 
-
-  async loadImages(date) {
-    try {
-      let startTime = new Date();
-      let endTime = new Date();
-      startTime.setTime(date.getTime());
-      endTime.setTime(date.getTime());
-      startTime.setHours(0, 0, 0, 0);
-      endTime.setHours(23, 59, 59, 0);
-      startTime = new Date(startTime.getTime() - startTime.getTimezoneOffset() * 60000);
-      endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset() * 60000);
-
-      const apitoken = cookie.load('breadboardapitoken');
-      const CONFIG = {
-        headers: { Authorization: `Token ${apitoken}` },
-        params: {
-          start_datetime: startTime.toISOString(),
-          end_datetime: endTime.toISOString(),
-          lab: 'fermi3',
-        },
-      };
-
-      console.log(CONFIG);
-      const res = await axios.get(API, CONFIG);
-      console.log(res.status);
-      console.log(res.data);
-      const images = await res.data.results.filter((image) => image.odpath && image.run);
-      images.forEach((image) => {
-        const keys = Object.keys(image.run.parameters);
-        for (const key of keys) {
-          image[key] = image.run.parameters[key];
-        }
-      });
-      return images;
-    } catch (e) {
-      console.log(e);
-      return null;
+  setCurrentImageSrc() {
+    if (this.state.currentImage) {
+      return this.state.currentImage.odpath;
     }
-  }
-
-  handleRowClick(image) {
-    this.setState({ currentImage: image });
+    return logo;
   }
 
   async dashboardDateChange(date) {
@@ -144,13 +113,76 @@ class Dashboard extends React.Component {
     }
   }
 
-  setCurrentImageSrc() {
-    if (this.state.currentImage) {
-      return this.state.currentImage.odpath;
-      console.log(logo);
-    }
-    return logo;
+  handleRowClick(image) {
+    this.setState({ currentImage: image });
   }
+
+
+  async loadImages(date) {
+    try {
+      let startTime = new Date();
+      let endTime = new Date();
+      startTime.setTime(date.getTime());
+      endTime.setTime(date.getTime());
+      startTime.setHours(0, 0, 0, 0);
+      endTime.setHours(23, 59, 57, 0);
+      startTime = new Date(startTime.getTime() - startTime.getTimezoneOffset() * 60000);
+      endTime = new Date(endTime.getTime() - endTime.getTimezoneOffset() * 60000);
+
+
+      const CONFIG = {
+        headers: { Authorization: `Token ${apitoken}` },
+        params: {
+          start_datetime: startTime.toISOString(),
+          end_datetime: endTime.toISOString(),
+          lab: 'fermi3',
+        },
+      };
+
+      console.log(CONFIG);
+      const res = await axios.get(API, CONFIG);
+      console.log(res.status);
+      console.log(res.data);
+      const images = await res.data.results.filter((image) => image.odpath && image.run);
+      images.forEach((image, index) => {
+        const keys = Object.keys(image.run.parameters);
+        for (const key of keys) {
+          image[key] = image.run.parameters[key];
+        }
+        image.breadboardId = image.id;
+        image.id = index;
+      });
+      return images;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  async editNotes(image) {
+    try {
+      const URL = `https://fermi3.com/images/${image.breadboardId}/`;
+      const CONFIG = {
+        headers: {
+          Authorization: `Token ${apitoken}`,
+          'Content-Type': 'application/json',
+        },
+      };
+      const data = {
+        notes: image.notes,
+        name: image.name,
+      };
+
+      console.log(URL);
+      console.log(CONFIG);
+      console.log(data);
+      const response = await axios.put(URL, data, CONFIG);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   render() {
     const { classes } = this.props;
@@ -169,6 +201,8 @@ class Dashboard extends React.Component {
                 dataColumns={columns}
                 defaultColumnWidths={defaultColumnWidths}
                 setCurrentImage={this.handleRowClick}
+                setRows={(images) => { this.setState({ images }); }}
+                editNotes={(i) => { this.editNotes(i); }}
               />
             </Grid>
             <Grid item xs={6}>

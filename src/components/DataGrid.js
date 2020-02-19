@@ -1,8 +1,13 @@
 import React from 'react';
 import {
-  Grid, Table,
-  VirtualTable, TableHeaderRow, TableColumnResizing,
+  Grid, 
+  Table,
+  VirtualTable, 
+  TableHeaderRow,
+  TableColumnResizing,
+  TableInlineCellEditing
 } from '@devexpress/dx-react-grid-material-ui';
+import { EditingState } from '@devexpress/dx-react-grid';
 
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
@@ -50,18 +55,40 @@ class DataGrid extends React.Component {
     );
   }
 
+  commitChanges= ({ added, changed, deleted }) => {
+    console.log(changed)
+    let changedRows;
+    if (changed) {
+      changedRows = this.props.dataRows.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+      let rowId = Object.keys(changed)[0]
+      this.props.editNotes({ ...this.props.dataRows[rowId], ...changed[rowId] })
+      console.log(changed)
+    }
+    this.props.setRows(changedRows);
+  }
+
+
+
   render() {
+    
     return (
       <TableContainer component={Paper}>
         <Grid
           rows={this.props.dataRows}
           columns={this.props.dataColumns}
         >
+          <EditingState
+           onCommitChanges={this.commitChanges}
+           columnExtensions={this.props.defaultColumnWidths} />
           <VirtualTable
             height={0.9 * window.innerHeight}
             rowComponent={this.TableRow}
           />
           <TableColumnResizing defaultColumnWidths={this.props.defaultColumnWidths} />
+          <TableInlineCellEditing
+            startEditAction='doubleClick'
+            selectTextOnEditStart='true'
+          />
           <TableHeaderRow />
         </Grid>
       </TableContainer>

@@ -44,25 +44,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const state = {
-  email: '',
+  username: '',
   password: '',
 };
 
 export default function SignIn() {
   const classes = useStyles();
 
-  // function login(e) {
-  //   console.log(e);
-  //   if (false) {
-  //     window.location.href = `${window.location.origin}/dashboard`;
-  //   } else {
-  //     alert('error logging in');
-  //   }
-  // }
 
-
-  function onEmailChange(e) {
-    state.email = e.target.value;
+  function onUsernameChange(e) {
+    state.username = e.target.value;
   }
 
   function onPasswordChange(e) {
@@ -73,7 +64,7 @@ export default function SignIn() {
   async function login() {
     try {
       const response = await axios.post('https://fermi3.com/api-token-auth/', {
-        username: state.email,
+        username: state.username,
         password: state.password,
       });
       console.log(response);
@@ -102,12 +93,11 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="username"
+            label="Username"
+            name="username"
             autoFocus
-            onChange={onEmailChange}
+            onChange={onUsernameChange}
           />
           <TextField
             variant="outlined"
@@ -121,11 +111,6 @@ export default function SignIn() {
             autoComplete="current-password"
             onChange={onPasswordChange}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-
 
           <Button
             fullWidth
@@ -137,18 +122,7 @@ export default function SignIn() {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link to="/dashboard" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link to="/dashboard" variant="body2">
-                Don't have an account? Sign Up
-              </Link>
-            </Grid>
-          </Grid>
+
         </form>
       </div>
     </Container>
