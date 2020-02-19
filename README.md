@@ -2,4 +2,9 @@
 
 Explore and label image data
 
-[screenshot](neptune_screenshot.png)
+
+------
+
+A screenshot: 
+
+![screenshot](neptune_screenshot.png)
