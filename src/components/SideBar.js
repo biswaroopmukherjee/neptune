@@ -10,6 +10,7 @@ import { Container, Box } from '@material-ui/core';
 import ListRouter from './ListRouter';
 import StaticDatePicker from './StaticDatePicker.js';
 import rotini from '../rotini.png';
+import neptune from '../icons/neptune5.svg';
 
 const drawerWidth = 340;
 
@@ -50,8 +51,9 @@ export default function SideBar(props) {
     <>
       <AppBar position="fixed" className={classes.appBar} borderBottom={1}>
         <Toolbar variant="dense">
-          <Typography variant="h6" noWrap>
-            Neptune - Fermi 3
+          <img src={neptune} width="30px" />
+          <Typography variant="h5" noWrap style={{ paddingLeft: '15px', fontFamily: 'monospace' }}>
+            neptune
           </Typography>
         </Toolbar>
       </AppBar>
