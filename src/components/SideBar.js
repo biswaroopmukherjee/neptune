@@ -1,12 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
+import Avatar from '@material-ui/core/Avatar';
 
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
+import { Container, Box } from '@material-ui/core';
 import ListRouter from './ListRouter';
 import StaticDatePicker from './StaticDatePicker.js';
+import rotini from '../rotini.png';
 
 const drawerWidth = 340;
 
@@ -34,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
   toolbar: theme.mixins.toolbar,
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
 
 }));
 
@@ -44,7 +51,7 @@ export default function SideBar(props) {
       <AppBar position="fixed" className={classes.appBar} borderBottom={1}>
         <Toolbar variant="dense">
           <Typography variant="h6" noWrap>
-            Neptune
+            Neptune - Fermi 3
           </Typography>
         </Toolbar>
       </AppBar>

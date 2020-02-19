@@ -81,7 +81,7 @@ class Dashboard extends React.Component {
       const startDate = new Date('January 13 2020');
       const images = await this.loadImages(startDate);
       console.log(images);
-      const currentImage = await images[0];
+      const currentImage = await images[0]; 
 
       this.setState({
         images,
