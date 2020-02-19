@@ -77,7 +77,7 @@ class App extends React.Component {
   //               <SignIn />
   //             </Route>
   //             <Route exact path="/dashboard">
-  //               <ClippedDrawer />
+  //               <Dashboard />
   //             </Route>
   //           </Switch>
 

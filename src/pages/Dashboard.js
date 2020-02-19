@@ -14,6 +14,7 @@ import { Container } from '@material-ui/core';
 
 import SideBar from '../components/SideBar';
 import DataGrid from '../components/DataGrid';
+import DataChart from '../components/DataChart';
 import logo from '../logo.svg';
 
 
@@ -71,6 +72,7 @@ class Dashboard extends React.Component {
     this.state = {
       images: [],
       currentImage: [],
+      cursor: {},
     };
   }
 
@@ -95,6 +97,7 @@ class Dashboard extends React.Component {
     if (this.state.currentImage) {
       return this.state.currentImage.odpath;
     }
+    console.log(logo)
     return logo;
   }
 
@@ -183,6 +186,11 @@ class Dashboard extends React.Component {
     }
   }
 
+  updateCursor=(e) =>{
+    const newcursor = { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
+    console.log(newcursor);
+    this.setState({ cursor: newcursor });
+  }
 
   render() {
     const { classes } = this.props;
@@ -206,17 +214,28 @@ class Dashboard extends React.Component {
               />
             </Grid>
             <Grid item xs={6}>
-              <Paper className={classes.paper}>
-                <img
-                  src={this.setCurrentImageSrc()}
-                  alt="odimage"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-              </Paper>
+              <Grid container spacing={3}>
+                <Grid item>
+                    <Paper className={classes.paper} id='odimageParent'>
+                    <img
+                      id='odimage'
+                      src={this.setCurrentImageSrc()}
+                      alt="odimage"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                      onMouseDown={this.updateCursor}
+                    />
+                  </Paper>
+                </Grid>
+                {/* <Grid item>
+                  <Paper className={classes.paper}>
+                    <DataChart />
+                  </Paper>
+                </Grid> */}
+              </Grid>
             </Grid>
           </Grid>
           {/* </Container> */}
