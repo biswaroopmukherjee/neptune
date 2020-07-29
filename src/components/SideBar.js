@@ -66,7 +66,7 @@ export default function SideBar(props) {
       >
 
         <div className={classes.toolbar} />
-        {/* <ListRouter /> */}
+        <ListRouter />
         <StaticDatePicker dashboardDateChange={props.dashboardDateChange} />
 
       </Drawer>
